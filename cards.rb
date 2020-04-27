@@ -8,6 +8,8 @@ class Cards
     validate!
   end
 
+  private
+
   def validate!
     raise "Некорректное значение карты" unless SUITS.include?(@suit.to_s) && VALUES.include?(@value.to_s)
   end
