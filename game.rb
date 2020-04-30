@@ -10,6 +10,7 @@ class Game
     start_game
   end
 
+  private
 
   def start_game
     @interface.name_entry
