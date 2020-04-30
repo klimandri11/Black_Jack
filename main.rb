@@ -6,3 +6,5 @@ require_relative 'desk'
 require_relative 'hand'
 require_relative 'game'
 require_relative 'interface'
+
+Game.new.run

@@ -1,10 +1,15 @@
 class Player
+  attr_accessor :bank, :hand, :name
+  NAME_FORMAT = /^([a-z])+$/i
 
   def initialize(name)
-    @player_name = name
+    @name = name
+    validate!
     @bank = Bank.new
     @hand = Hand.new
-    @number_cards = 0
   end
 
+  def validate!
+    raise "Некорректное имя" if @name !~ NAME_FORMAT
+  end
 end
