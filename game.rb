@@ -1,5 +1,5 @@
 class Game
-  attr_accessor :bank, :dealer, :player, :desk
+  attr_accessor :bank, :dealer, :player, :deck
   def initialize
     @interface = Interface.new
     @dealer = Dealer.new
@@ -11,6 +11,18 @@ class Game
   end
 
   private
+
+  def draw_1?
+    @player.hand.point > 21 && @dealer.hand.point > 21 || @player.hand.point == @dealer.hand.point
+  end
+
+  def draw_2?
+    @player.hand.point > 21 || @player.hand.point < @dealer.hand.point && @player.hand.point <= 21 && @dealer.hand.point <= 21
+  end
+
+  def draw_3?
+    dealer.hand.point > 21 || player.hand.point > dealer.hand.point && player.hand.point <= 21 && dealer.hand.point <= 21
+  end
 
   def start_game
     @interface.name_entry
@@ -35,7 +47,7 @@ class Game
   end
 
   def reset
-    @desk = Desk.new
+    @deck = Deсk.new
     @bank.reset_bank
 
     @player.hand.card_zeroing
@@ -44,17 +56,17 @@ class Game
     @dealer.hand.point_zeroing
   end
 
-  def winner(player, dealer)
-    if player.hand.point > 21 && dealer.hand.point > 21 || player.hand.point == dealer.hand.point
+  def winner
+    if draw_1?
       puts "Ничья"
-      dealer.bank.add_money(@bank.total_money / 2)
-      player.bank.add_money(@bank.total_money / 2)
-    elsif player.hand.point > 21 || player.hand.point < dealer.hand.point && player.hand.point <= 21 && dealer.hand.point <= 21
-      @interface.show_winner(dealer)
-      dealer.bank.add_money(@bank.total_money)
-    elsif dealer.hand.point > 21 || player.hand.point > dealer.hand.point && player.hand.point <= 21 && dealer.hand.point <= 21
-      @interface.show_winner(player)
-      player.bank.add_money(@bank.total_money)
+      @dealer.bank.add_money(@bank.total_money / 2)
+      @player.bank.add_money(@bank.total_money / 2)
+    elsif draw_2?
+      @interface.show_winner(@dealer)
+      @dealer.bank.add_money(@bank.total_money)
+    elsif draw_3?
+      @interface.show_winner(@player)
+      @player.bank.add_money(@bank.total_money)
     end
     @interface.player_data(@player)
     @interface.player_data(@dealer)
@@ -70,8 +82,8 @@ class Game
       @dealer.bank.stavka(10)
 
       @bank.add_money(20)
-      @desk.card_draw(2, @player.hand)
-      @desk.card_draw(2, @dealer.hand)
+      @deck.card_draw(2, @player.hand)
+      @deck.card_draw(2, @dealer.hand)
 
       @player.hand.scoring
       @dealer.hand.scoring
@@ -81,23 +93,17 @@ class Game
       @interface.show_question
       choise_2 = gets.chomp.to_i
       if choise_2 == 1 && @player.hand.number_cards < 3
-        @desk.card_draw(1, @player.hand)
+        @deck.card_draw(1, @player.hand)
         @player.hand.scoring
-        if @dealer.hand.point < 17
-          @desk.card_draw(1, @dealer.hand)
-          @dealer.hand.scoring
-        end
-        winner(@player, @dealer)
+        @dealer.comparison_points(@player, @deck)
+        winner
 
       elsif choise_2 == 2
-        winner(@player, @dealer)
+        winner
 
       elsif choise_2 == 3
-        if @dealer.hand.point < 17
-          @desk.card_draw(1, @dealer.hand)
-          @dealer.hand.scoring
-        end
-        winner(@player, @dealer)
+        @dealer.comparison_points(@player, @deck)
+        winner
       end
     end
   end

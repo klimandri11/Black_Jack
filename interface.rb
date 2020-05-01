@@ -32,10 +32,9 @@ class Interface
   end
 
   def show_winner(player)
-    puts "!!!!!!!!!!!!!!!!!!!!!!!!---------"
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     puts "Выиграл: #{player.name}"
     puts "---------------------------------"
   end
-
 
 end
